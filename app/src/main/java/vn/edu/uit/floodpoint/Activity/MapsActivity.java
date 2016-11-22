@@ -87,7 +87,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    public void searchNearby(double latitude, double longitude, double distance) {
+    public void initSearchNearby(double latitude, double longitude, double distance) {
         geoQuery = geoFire.queryAtLocation(new GeoLocation(latitude, longitude), distance);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
@@ -117,4 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    public void changeNearby(double latitude, double longitude, double distance) {
+        geoQuery = geoFire.queryAtLocation(new GeoLocation(latitude, longitude), distance);
+    }
 }
