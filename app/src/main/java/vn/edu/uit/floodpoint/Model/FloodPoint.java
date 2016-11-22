@@ -1,6 +1,8 @@
 package vn.edu.uit.floodpoint.Model;
 
 
+import java.util.Date;
+
 public class FloodPoint {
     private String name;
     private int level;
@@ -8,16 +10,25 @@ public class FloodPoint {
     private String imageUrl;
     private double latitude;
     private double longitude;
+    private Date expiredDate;
 
     public FloodPoint() {
     }
 
-    public FloodPoint(String name, int level, String comment, double latitude, double longitude) {
+    public FloodPoint(String name, int level, String comment, double latitude, double longitude, Date expiredDate) {
         this.name = name;
         this.level = level;
         this.comment = comment;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public Date getExpiredDate() {
+        return expiredDate;
+    }
+
+    public void setExpiredDate(Date expiredDate) {
+        this.expiredDate = expiredDate;
     }
 
     public String getName() {
