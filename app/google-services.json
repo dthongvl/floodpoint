@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1013764444149",
+    "firebase_url": "https://floodpoint-5840b.firebaseio.com",
+    "project_id": "floodpoint-5840b",
+    "storage_bucket": "floodpoint-5840b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013764444149:android:9ffa14c118249664",
+        "android_client_info": {
+          "package_name": "vn.edu.uit.floodpoint"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1013764444149-objdaujjnmlbc68inl0ta6p2b5vibfan.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.edu.uit.floodpoint",
+            "certificate_hash": "963C78728898684C44D576C6B1DAD78B23FA62CA"
+          }
+        },
+        {
+          "client_id": "1013764444149-j1au4pp2706ai5iko0im0i8q5repgb8f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiQYuXRKWLOiP1C1Itc-5Pqra6Axql1vQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1013764444149-j1au4pp2706ai5iko0im0i8q5repgb8f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

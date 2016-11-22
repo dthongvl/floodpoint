@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">FloodPoint</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="GOOGLE_SIGN_IN_KEY">1013764444149-objdaujjnmlbc68inl0ta6p2b5vibfan.apps.googleusercontent.com</string>
+</resources>
