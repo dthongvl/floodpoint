@@ -1,20 +1,25 @@
 package vn.edu.uit.floodpoint.Model;
 
 
+import com.google.android.gms.maps.model.Marker;
+import com.google.firebase.database.Exclude;
+
 public class FloodPoint {
     private String name;
-    private int level;
+   // private int level;
     private String comment;
     private String imageUrl;
     private double latitude;
     private double longitude;
+    @Exclude
+    private Marker marker;
 
     public FloodPoint() {
     }
 
-    public FloodPoint(String name, int level, String comment, double latitude, double longitude) {
+    public FloodPoint(String name, String comment, double latitude, double longitude) {
         this.name = name;
-        this.level = level;
+       // this.level = level;
         this.comment = comment;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -28,13 +33,13 @@ public class FloodPoint {
         this.name = name;
     }
 
-    public int getLevel() {
+   /* public int getLevel() {
         return level;
     }
 
     public void setLevel(int level) {
         this.level = level;
-    }
+    }*/
 
     public String getComment() {
         return comment;
@@ -66,5 +71,13 @@ public class FloodPoint {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public Marker getMarker() {
+        return marker;
+    }
+
+    public void setMarker(Marker marker) {
+        this.marker = marker;
     }
 }

@@ -8,14 +8,18 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.SignInActivity">
+        <activity android:name=".Activity.SignInActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,11 +36,41 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="AIzaSyB4riSHfPEnRS0z0jVfB-XkklrY-xdB8IM" />
 
         <activity
             android:name=".Activity.MapsActivity"
             android:label="@string/title_activity_maps"></activity>
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.android.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
+        <service
+            android:name=".BackGroundServices.RemovePointService"
+            android:exported="false"/>
+        <service android:name=".BackGroundServices.DetectPointGetInRange"
+            android:exported="false"/>
+        <receiver
+            android:name=".Receiver.AlarmReceiver"/>
+        <receiver
+            android:name=".Receiver.RemovePointReceiver">
+            <intent-filter>
+                <action android:name="RemovePoint" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".Receiver.PointGetInRangeReceiver">
+            <intent-filter>
+                <action android:name="PointGetInRange" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
