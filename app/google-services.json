@@ -15,11 +15,23 @@
       },
       "oauth_client": [
         {
+          "client_id": "696390491654-c808n6fis2vi0osjrfja2m65dhudgsjo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.edu.uit.floodpoint",
+            "certificate_hash": "380f81414005b61f1c4b77c223593bcc0b2b78c6"
+          }
+        },
+        {
+          "client_id": "696390491654-sta3t5ig0vr447k5fr1shrjpnoh4hr0u.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
           "client_id": "696390491654-di6hvqjofnjgjr6qhkqteqehm3icj471.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "vn.edu.uit.floodpoint",
-            "certificate_hash": "7625AE0EDA8BE0D6335DD8A712C929175222D8FA"
+            "certificate_hash": "7625ae0eda8be0d6335dd8a712c929175222d8fa"
           }
         },
         {
@@ -40,7 +52,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "696390491654-96bqh19k7h9uagd1kagrc6hp1n32sbpc.apps.googleusercontent.com",
+              "client_id": "696390491654-sta3t5ig0vr447k5fr1shrjpnoh4hr0u.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

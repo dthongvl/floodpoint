@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "vn.edu.uit.floodpoint"
         minSdkVersion 16
@@ -21,7 +21,6 @@ android {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'android-apt'
 def AAVersion = '4.1.0'
 
 dependencies {
@@ -30,17 +29,18 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    apt "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
-    compile 'com.android.support:appcompat-v7:25.0.0'
+    //noinspection GradleCompatible,GradleCompatible
+    compile 'com.android.support:appcompat-v7:25.4.0'
     compile 'com.firebase:geofire-android:2.1.1'
-    compile 'com.google.firebase:firebase-auth:9.8.0'
-    compile 'com.google.android.gms:play-services-auth:9.8.0'
-    compile 'com.google.firebase:firebase-database:9.8.0'
-    compile 'com.google.firebase:firebase-core:9.8.0'
-    compile 'com.google.android.gms:play-services:9.8.0'
-    compile 'com.android.support:design:23.0.0'
-    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.google.firebase:firebase-auth:11.6.0'
+    compile 'com.google.android.gms:play-services-auth:11.6.0'
+    compile 'com.google.firebase:firebase-database:11.6.0'
+    compile 'com.google.firebase:firebase-core:11.6.0'
+    //noinspection UseOfBundledGooglePlayServices
+    compile 'com.google.android.gms:play-services:11.6.0'
+    compile 'com.android.support:design:25.4.0'
+    compile 'com.android.support:multidex:1.0.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.race604.waveloading:library:1.1.0'
     testCompile 'junit:junit:4.12'
