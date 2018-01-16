@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -37,7 +38,6 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
-import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -52,7 +52,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -65,6 +68,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
+import com.warkiz.widget.IndicatorSeekBar;
 
 import java.io.File;
 import java.io.IOException;
@@ -100,7 +104,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     EditText txtName;
     EditText txtDescription;
     RadioGroup rdgLasting;
-    Switch swFolow;
+    Switch swFollow;
+    IndicatorSeekBar boundSeek;
+    ImageView deleteButton;
     //Image
     String mCurrentPhotoPath;
     Uri mCurrentURI;
@@ -133,8 +139,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     SupportMapFragment mapFragment ;
     PlaceAutocompleteFragment autocompleteFragment;
 
+    //Marker
+    Marker selectMarker;
+    Circle curentCircle;
+
     //Alarm
     Long scheduleTime;
+
+    //Bound
+    Integer currentBound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +157,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         buildGoogleApiClient();
         mGoogleApiClient.connect();
 
-
     }
 
     @Override
@@ -152,7 +164,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             /*Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            Matrix matrix = new Matrix();
+            Matrix matrix = new_point Matrix();
             matrix.postRotate(-90);
             Bitmap rotateBitMap= Bitmap.createBitmap(imageBitmap,0,0,imageBitmap.getWidth(),imageBitmap.getHeight(),matrix,true);
             imgPhoto.setImageBitmap(Bitmap.createBitmap(rotateBitMap,0,rotateBitMap.getHeight()/3,
@@ -236,7 +248,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
-        searchNearby(location.getLatitude(),location.getLongitude(),1);
+        searchNearby(location.getLatitude(),location.getLongitude(),currentBound);
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+//                new LatLng(location.getLatitude(), location.getLongitude()), DEFAULT_ZOOM));
+
     }
 
 
@@ -289,6 +304,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onMapClick(LatLng latLng) {
                 txtAdress.setText(getAdress(latLng));
                 curentPoint=latLng;
+                if (selectMarker != null) {
+                    selectMarker.remove();
+                }
+
+                selectMarker = mMap.addMarker(new MarkerOptions().
+                        position(curentPoint).
+                        icon(BitmapDescriptorFactory.fromResource(R.drawable.new_point)));
+
+                fabAdd.setVisibility(View.VISIBLE);
+                deleteButton.setVisibility(View.GONE);
             }
         });
 
@@ -309,7 +334,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                searchNearby(place.getLatLng().latitude,place.getLatLng().longitude,1);
+                searchNearby(place.getLatLng().latitude,place.getLatLng().longitude,currentBound);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude),DEFAULT_ZOOM));
             }
 
@@ -319,7 +344,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        swFolow.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        swFollow.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
@@ -331,6 +356,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                       SharedPreferences.Editor edit = sharedPreferences.edit();
                       edit.putBoolean("follow",true);
                       edit.commit();
+                      Toast.makeText(MapsActivity.this, "Notification enabled", Toast.LENGTH_SHORT).show();
+
                   }
                   else {
                       stopService(new Intent(MapsActivity.this, DetectPointGetInRange.class));
@@ -338,6 +365,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                       SharedPreferences.Editor edit = sharedPreferences.edit();
                       edit.putBoolean("follow",false);
                       edit.commit();
+                      Toast.makeText(MapsActivity.this, "Notification disable", Toast.LENGTH_SHORT).show();
+
                   }
             }
         });
@@ -345,7 +374,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
-                searchNearby(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude(),1);
+                searchNearby(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude(),currentBound);
                 return false;
             }
         });
@@ -360,12 +389,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         txtName = (EditText) findViewById(R.id.txtViewName);
         txtDescription= (EditText) findViewById(R.id.txtDescription);
         rdgLasting = (RadioGroup) findViewById(R.id.rdgLasting);
-        swFolow = (Switch) findViewById(R.id.swFolow);
-        swFolow.bringToFront();
+        swFollow = (Switch) findViewById(R.id.swFolow);
+        swFollow.bringToFront();
+        boundSeek = (IndicatorSeekBar) findViewById(R.id.bound_seek);
+        boundSeek.bringToFront();
+        deleteButton = (ImageView) findViewById(R.id.delete);
+        deleteButton.setImageResource(R.drawable.delete_point);
+        deleteButton.bringToFront();
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final GeoPoint geoPoint = ListPoint.getInstance().getGeoByLocation(selectMarker.getPosition());
+                try {
+                    if(geoPoint.getKey()!=null){
+                        geoFireRef.child(geoPoint.getKey()).removeValue();
+                        floodPointRef.child(geoPoint.getKey()).removeValue();
+                        selectMarker.remove();
+                    }
+                } catch (Exception e) {
+
+                }
+                finally {
+                    fabAdd.setVisibility(View.VISIBLE);
+                    deleteButton.setVisibility(View.GONE);
+                    searchNearby(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), currentBound);
+                }
+
+
+            }
+        });
+        currentBound = 1;
         if(getFollowState())
-            swFolow.setChecked(true);
+            swFollow.setChecked(true);
         else
-            swFolow.setChecked(false);
+            swFollow.setChecked(false);
         autocompleteFragment.getView().setBackgroundColor(Color.WHITE);
         View locationButton = ((View) mapFragment.getView().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)
@@ -373,10 +430,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // position on right bottom
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
         //layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        layoutParams.setMargins(0, 300,30,0);
+        layoutParams.setMargins(0, 330,30,0);
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         scheduleTime= Long.valueOf(7200);
+
+        boundSeek.setOnSeekChangeListener(new IndicatorSeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(IndicatorSeekBar seekBar, int progress, float progressFloat, boolean fromUserTouch) {
+                currentBound = progress;
+                searchNearby(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), currentBound);
+                if (curentCircle != null) {
+                    curentCircle.remove();
+                }
+
+            }
+
+            @Override
+            public void onSectionChanged(IndicatorSeekBar seekBar, int thumbPosOnTick, String textBelowTick, boolean fromUserTouch) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(IndicatorSeekBar seekBar, int thumbPosOnTick) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(IndicatorSeekBar seekBar) {
+
+            }
+        });
+
     }
 
     private boolean getFollowState() {
@@ -477,7 +562,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         FloodPoint point = ListPoint.getInstance().getAllPost().get(geo.getKey());
         point.setMarker(mMap.addMarker(new MarkerOptions().position(geo.getPosition())
                 .title(point.getName())
-                .snippet(point.getComment())));
+                .snippet(point.getComment())
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.flood_marker))));
     }
 
     /**
@@ -536,6 +622,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public View getInfoContents(Marker marker) {
+                FloodPoint floodPoint = new FloodPoint();
+                final GeoPoint geoPoint = ListPoint.getInstance().getGeoByLocation(marker.getPosition());
+
                 // Inflate the layouts for the info window, title and snippet.
                 View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents, null);
                 TextView txtName = ((TextView) infoWindow.findViewById(R.id.txtViewName));
@@ -543,11 +632,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 TextView txtAdress = ((TextView) infoWindow.findViewById(R.id.txtViewAdress));
                 ImageView imgPhoto = (ImageView) infoWindow.findViewById(R.id.imgViewPhoto);
 
-                FloodPoint floodPoint = new FloodPoint();
-                GeoPoint geoPoint = ListPoint.getInstance().getGeoByLocation(marker.getPosition());
+
                 if(geoPoint.getKey()!=null){
-                    Picasso.with(MapsActivity.this).load(floodPoint.getImageUrl()).resize(200,120).centerCrop().into(imgPhoto);
                     floodPoint=ListPoint.getInstance().getAllPost().get(geoPoint.getKey());
+                    Picasso.with(MapsActivity.this).load(floodPoint.getImageUrl()).resize(200,120).centerCrop().into(imgPhoto);
                     txtName.setText(floodPoint.getName());
                     txtDescription.setText(floodPoint.getComment());
                     txtAdress.setText(getAdress(marker.getPosition()));
@@ -567,9 +655,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new LatLng(mCurrentLocation.getLatitude(),
                             mCurrentLocation.getLongitude()), DEFAULT_ZOOM));
         } else {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                selectMarker = marker;
+                fabAdd.setVisibility(View.GONE);
+                deleteButton.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
     }
 
 
@@ -583,6 +680,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 try {
+                    selectMarker.remove();
                     floodPoint.setImageUrl(taskSnapshot.getDownloadUrl().toString());
                     floodPointRef.child(key).setValue(floodPoint);
                     geoFire.setLocation(key, new GeoLocation(floodPoint.getLatitude(), floodPoint.getLongitude()));
@@ -639,6 +737,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void searchNearby(double latitude, double longitude, double distance) {
+        mMap.clear();
         geoQuery = geoFire.queryAtLocation(new GeoLocation(latitude, longitude), distance);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
@@ -651,8 +750,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onKeyExited(String key) {
-                ListPoint.getInstance().removeGeo(key);
-                removeOutRangeMarker(key);
+//                ListPoint.getInstance().removeGeo(key);
+//                removeOutRangeMarker(key);
             }
 
             @Override
@@ -670,6 +769,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 System.err.println("There was an error with this query: " + error);
             }
         });
+
+        curentCircle = mMap.addCircle(
+                new CircleOptions()
+                        .center(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()))
+                        .radius(currentBound * 1000));
     }
 
     private void scheduleAlarm(long timeInSecond, String keyToDelete){

@@ -12,6 +12,16 @@
         android:layout_above="@+id/layoutAdd"
         android:layout_alignParentTop="true">
 
+        <ImageView
+            android:id="@+id/delete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:translationZ="1dp"
+            app:layout_anchor="@id/map"
+            app:layout_anchorGravity="bottom|center_horizontal"
+            app:srcCompat="@drawable/delete_point" />
+
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -19,7 +29,33 @@
             android:layout_marginTop="120dp"
             app:layout_anchor="@+id/map"
             app:layout_anchorGravity="right|end"
-            android:layout_marginEnd="5dp" />
+            android:layout_marginRight="5dp" />
+
+        <com.warkiz.widget.IndicatorSeekBar
+            android:id="@+id/bound_seek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="110dp"
+            app:isb_indicator_color="@color/colorAccent"
+            app:isb_indicator_stay="true"
+            app:isb_indicator_text_color="@color/cast_libraries_material_featurehighlight_text_body_color"
+            app:isb_indicator_type="rectangle_rounded_corner"
+            app:isb_max="5"
+            app:isb_min="1"
+            app:isb_progress="1"
+            app:isb_seek_bar_type="discrete_ticks"
+            app:isb_show_indicator="true"
+            app:isb_text_color="@color/colorAccent"
+            app:isb_thumb_color="@color/colorAccent"
+            app:isb_thumb_progress_stay="true"
+            app:isb_tick_color="@color/colorAccent"
+            app:isb_tick_type="rec"
+            app:isb_track_background_bar_size="8dp"
+            app:isb_track_progress_bar_color="@android:color/holo_blue_dark"
+            app:isb_track_progress_bar_size="8dp"
+            app:isb_track_rounded_corners="true"
+            app:layout_anchor="@id/map"
+            app:layout_anchorGravity="top|center_horizontal" />
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
@@ -40,22 +76,21 @@
 
         <fragment
             android:id="@+id/place_autocomplete_fragment"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             android:layout_margin="10dp"
             android:focusable="true"
-            android:focusableInTouchMode="true"
-            />
+            android:focusableInTouchMode="true" />
     </android.support.design.widget.CoordinatorLayout>
 
     <ScrollView
+        android:id="@+id/layoutAdd"
         android:layout_width="wrap_content"
         android:layout_height="250dp"
-        android:id="@+id/layoutAdd"
-        android:visibility="gone"
         android:layout_alignParentBottom="true"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:visibility="gone">
 
 
         <RelativeLayout
@@ -64,80 +99,83 @@
 
 
             <TextView
-                android:text="Thời gian ngập : "
+                android:id="@+id/txtLasting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/txtLasting"
-                android:layout_below="@+id/txtViewAdress" />
+                android:layout_below="@+id/txtViewAdress"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="4dp"
+                android:text="Lasting : " />
 
             <RadioGroup
+                android:id="@+id/rdgLasting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/rdgLasting"
-                android:orientation="horizontal"
-                android:layout_below="@+id/txtViewAdress"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/txtViewAdress"
                 android:layout_toEndOf="@+id/txtLasting"
-                android:layout_toRightOf="@+id/txtLasting">
+                android:layout_toRightOf="@+id/txtLasting"
+                android:orientation="horizontal">
 
                 <RadioButton
-                    android:text="2h"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:id="@+id/rdTwoHours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:checked="true" />
+                    android:checked="true"
+                    android:text="2h" />
 
                 <RadioButton
-                    android:text="3h"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:id="@+id/rdThreeHours"
-                    android:layout_weight="1" />
-
-                <RadioButton
-                    android:text="6h"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="3h" />
+
+                <RadioButton
                     android:id="@+id/rdSixHours"
-                    android:layout_weight="1" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="6h" />
             </RadioGroup>
 
             <ImageView
+                android:id="@+id/imgViewPhoto"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:id="@+id/imgViewPhoto"
-                android:padding="5dp"
-                android:layout_alignParentTop="true" />
+                android:layout_alignParentTop="true"
+                android:layout_margin="4dp"
+                android:padding="5dp" />
 
             <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:ems="10"
                 android:id="@+id/txtViewName"
-                android:padding="5dp"
-                android:layout_below="@+id/rdgLasting"
-                android:hint="Title" />
-
-            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
+                android:layout_below="@+id/rdgLasting"
                 android:ems="10"
+                android:hint="Title"
+                android:inputType="textPersonName"
+                android:padding="5dp" />
+
+            <EditText
                 android:id="@+id/txtDescription"
-                android:padding="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/txtViewName"
-                android:hint="Description" />
+                android:ems="10"
+                android:hint="Description"
+                android:inputType="textPersonName"
+                android:padding="5dp" />
 
             <TextView
+                android:id="@+id/txtViewAdress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/txtViewAdress"
-                android:padding="5dp"
                 android:layout_below="@+id/imgViewPhoto"
-                android:hint="Adress" />
+                android:hint="Adress"
+                android:padding="5dp" />
 
         </RelativeLayout>
     </ScrollView>

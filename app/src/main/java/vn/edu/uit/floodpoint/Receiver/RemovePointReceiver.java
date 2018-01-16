@@ -31,7 +31,7 @@ public class RemovePointReceiver extends BroadcastReceiver {
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle("FloodPoint")
-                        .setContentText("There is a new flood point near you!")
+                        .setContentText("Point remove!")
                         .setLights(Color.RED,1,1)
                         .setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
         Intent resultIntent = new Intent(context, SignInActivity.class);
